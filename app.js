@@ -18,7 +18,7 @@ io.on("connection", (socket) => {
     console.log("New WebSocket connection");
 
     socket.on("send-location", (data) => {
-        io.emit("recieve-location", { id: socket.id, ...data });
+        io.emit("receive-location", { id: socket.id, ...data });
     });
 
     socket.on("disconnect", () => {
@@ -26,8 +26,6 @@ io.on("connection", (socket) => {
     });
 });
 
-const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+server.listen(3000, () => {
+    console.log("Server is listening on port 3000");
 });

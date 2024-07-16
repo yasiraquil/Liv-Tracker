@@ -1,9 +1,12 @@
 const socket = io();
+let userName = '';
 
 if (navigator.geolocation) {
+    userName = prompt("Enter your name:");
+    
     navigator.geolocation.watchPosition((position) => {
         const { latitude, longitude } = position.coords;
-        socket.emit("send-location", { latitude, longitude });
+        socket.emit("send-location", { name: userName, latitude, longitude });
     }, (error) => {
         console.error(error);
     }, {
@@ -16,18 +19,20 @@ if (navigator.geolocation) {
 const map = L.map("map").setView([0, 0], 16);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "OpenSteetMap"
+    attribution: "OpenStreetMap"
 }).addTo(map);
 
 const markers = {};
 
-socket.on("recieve-location", (data) => {
-    const { id, latitude, longitude } = data;
+socket.on("receive-location", (data) => {
+    const { id, name, latitude, longitude } = data;
     map.setView([latitude, longitude]);
     if (markers[id]) {
         markers[id].setLatLng([latitude, longitude]);
+        markers[id].bindPopup(name).openPopup();
     } else {
-        markers[id] = L.marker([latitude, longitude]).addTo(map);
+        markers[id] = L.marker([latitude, longitude]).addTo(map)
+            .bindPopup(name).openPopup();
     }
 });
 
